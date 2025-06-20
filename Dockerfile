@@ -22,16 +22,13 @@ RUN sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 # Set working directory
 WORKDIR /app
 
-# Copy project files
-COPY . .
-
-# Get dependencies
+# Copy pubspec before full source (optimize Docker caching)
+COPY pubspec.* ./
 RUN flutter pub get
 
-# Build both targets!
+# Now copy all project files
+COPY . .
+
+# Build APK and Web
 RUN flutter build apk --release
 RUN flutter build web
-
-# Final output:
-# - Android APK: build/app/outputs/flutter-apk/app-release.apk
-# - Web:         build/web/
